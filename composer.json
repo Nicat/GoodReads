@@ -1,0 +1,44 @@
+{
+  "name": "njt/good-reads",
+  "description": "PHP wrapper to communicate with Goodreads API.",
+  "type": "library",
+  "keywords": [
+    "GoodReads PHP",
+    "GoodReads API",
+    "GoodReads Library"
+  ],
+  "homepage": "https://github.com/Nicat/GoodReads",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": ":Nijat Asadov",
+      "email": "nijatasadov@gmail.com",
+      "homepage": "http://nijatasadov.com",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "~5.5|~7.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "5.5.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Nicat\\GoodReads\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Nicat\\GoodReads\\": "tests"
+    }
+  },
+  "scripts": {
+    "test": "phpunit"
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0-dev"
+    }
+  }
+}
