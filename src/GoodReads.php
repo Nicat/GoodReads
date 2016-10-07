@@ -165,7 +165,7 @@ class GoodReads {
      *
      * @return int|null
      */
-    public function getAuthorIDByName($name)
+    public function authorIDByName($name)
     {
         $get = $this->getData(static::authorSearch, $name);
 
@@ -179,7 +179,7 @@ class GoodReads {
      *
      * @return \SimpleXMLElement|\SimpleXMLElement[]
      */
-    public function getAuthorByID($id)
+    public function authorByID($id)
     {
         $get = $this->getData(static::authorShow, $id);
 
@@ -194,7 +194,7 @@ class GoodReads {
      *
      * @return \SimpleXMLElement|\SimpleXMLElement[]
      */
-    public function getAuthorBooks($id, $page = 1)
+    public function authorBooks($id, $page = 1)
     {
         $params = [
             'id'   => $id,
@@ -212,16 +212,16 @@ class GoodReads {
      *
      * @return null|\SimpleXMLElement|\SimpleXMLElement[]
      */
-    public function getAuthorByName($name)
+    public function authorByName($name)
     {
         /* Find author id */
-        $id = $this->getAuthorIDByName($name);
+        $id = $this->authorIDByName($name);
 
         if ( ! $id)
             return null;
 
         /* Get Author by ID */
-        $author = $this->getAuthorByID($id);
+        $author = $this->authorByID($id);
 
         return $author;
     }
@@ -233,7 +233,7 @@ class GoodReads {
      *
      * @return \SimpleXMLElement|\SimpleXMLElement[]
      */
-    public function getBookByISBN($id)
+    public function bookByISBN($id)
     {
         $get = $this->getData(self::isbn, $id);
 
