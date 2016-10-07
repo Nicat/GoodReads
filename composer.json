@@ -9,7 +9,7 @@
   ],
   "homepage": "https://github.com/Nicat/GoodReads",
   "license": "MIT",
-  "minimum-stability": "dev",
+  "minimum-stability": "1.0.0",
   "authors": [
     {
       "name": ":Nijat Asadov",
