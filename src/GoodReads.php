@@ -27,6 +27,7 @@ class GoodReads {
     const authorBooks = 'author/list/';
     const authorSearch = 'api/author_url/';
     const isbn = 'book/isbn/';
+    const bookShow = 'book/show/';
     const search = 'search/index.xml';
     const listGroups = 'group/list/';
     const groupMembers = 'group/members/';
@@ -53,26 +54,24 @@ class GoodReads {
      *
      * @param      $url
      * @param null $params
-     * @param bool $append
      *
      * @return string
      */
-    protected function generateURL($url, $params = null, $append = false)
+    protected function generateURL($url, $params = null)
     {
         $url = self::DOMAIN . $url;
+        $httpQuery = "?format=xml&key=" . $this->key;
 
         if (is_array($params))
+        {
             $query = (( ! empty($params)) ? http_build_query($params, '', '&') : '');
+            $url .= $httpQuery . "&" . $query;
+        }
         else
+        {
             $query = urlencode($params);
-
-
-        $general = "?format=xml&key=" . $this->key;
-
-        if ($append)
-            $url .= $general . "&" . $query;
-        else
-            $url .= $query . $general;
+            $url .= $query . $httpQuery;
+        }
 
         return $url;
     }
@@ -129,13 +128,13 @@ class GoodReads {
      *
      * Used SimpleXMLElement
      *
-     * @param $url
+     * @param string $xml
      *
      * @return \SimpleXMLElement
      */
-    public function parseXML($url)
+    public function parseXML($xml)
     {
-        return @simplexml_load_string($this->curlRequest($url));;
+        return @simplexml_load_string($xml);
     }
 
     /**
@@ -149,13 +148,16 @@ class GoodReads {
      */
     protected function getData($url, $params = [], $append = false)
     {
+        /* Generate Url with http query */
         $url = $this->generateURL($url, $params, $append);
 
-        //echo $url . "\n";
+        /* Get response from api */
+        $xml = $this->curlRequest($url);
 
-        $object = $this->parseXML($url);
+        /* Parse XML to Object */
+        $parsed = $this->parseXML($xml);
 
-        return $object;
+        return $parsed;
     }
 
     /**
@@ -200,7 +202,7 @@ class GoodReads {
             'id'   => $id,
             'page' => $page,
         ];
-        $get = $this->getData(self::authorBooks, $params, true);
+        $get = $this->getData(self::authorBooks, $params);
 
         return $get ? $get->author : $get;
     }
@@ -224,6 +226,20 @@ class GoodReads {
         $author = $this->authorByID($id);
 
         return $author;
+    }
+
+    /**
+     * Get Book By ID
+     *
+     * @param int|string $id Book id
+     *
+     * @return \SimpleXMLElement|\SimpleXMLElement[]
+     */
+    public function book($id)
+    {
+        $get = $this->getData(self::bookShow . $id . ".xml");
+
+        return $get ? $get->book : $get;
     }
 
     /**
@@ -261,7 +277,7 @@ class GoodReads {
             $params = array_merge($params, $searchParams);
         }
 
-        $get = $this->getData(static::search, $params, true);
+        $get = $this->getData(static::search, $params);
 
         if ($get)
         {
@@ -334,7 +350,7 @@ class GoodReads {
             'page' => $page,
         ];
 
-        $get = $this->getData(self::listGroups . $id . '.xml', $params, true);
+        $get = $this->getData(self::listGroups . $id . '.xml', $params);
 
         return $get ? $get->groups : $get;
     }
@@ -361,7 +377,7 @@ class GoodReads {
         if ($sort)
             $params['sort'] = $sort;
 
-        $get = $this->getData(self::groupMembers . $id . '.xml', $params, false);
+        $get = $this->getData(self::groupMembers . $id . '.xml', $params);
 
         return $get ? $get->group_users : $get;
     }
@@ -381,7 +397,7 @@ class GoodReads {
             'page' => $page,
         ];
 
-        $get = $this->getData(self::findGroup, $params, true);
+        $get = $this->getData(self::findGroup, $params);
 
         return $get ? $get->groups : $get;
     }
@@ -394,13 +410,13 @@ class GoodReads {
      *
      * @return \SimpleXMLElement|\SimpleXMLElement[]
      */
-    public function groupInfo($id, $sort = 'title')
+    public function group($id, $sort = 'title')
     {
         $params = [
             'sort' => $sort,
         ];
 
-        $get = $this->getData(self::groupShow . $id . 'xml', $params, true);
+        $get = $this->getData(self::groupShow . $id . 'xml', $params);
 
         return $get ? $get->group : $get;
     }
@@ -417,7 +433,7 @@ class GoodReads {
         $params = [
             'id' => $id,
         ];
-        $get = $this->getData(self::reviews, $params, true);
+        $get = $this->getData(self::reviews, $params);
 
         return $get ? $get->review : $get;
     }
@@ -436,7 +452,7 @@ class GoodReads {
             'user_id' => $userId,
             'book_id' => $bookId,
         ];
-        $get = $this->getData(self::reviewOfUser, $params, true);
+        $get = $this->getData(self::reviewOfUser, $params);
 
         return $get ? $get->review : $get;
     }
@@ -467,7 +483,7 @@ class GoodReads {
         $params = [
             'id' => $id,
         ];
-        $get = $this->getData(self::userShow, $params, true);
+        $get = $this->getData(self::userShow, $params);
 
         return $get ? $get->user : $get;
     }
@@ -484,7 +500,7 @@ class GoodReads {
         $params = [
             'username' => $username,
         ];
-        $get = $this->getData(self::userShow, $params, true);
+        $get = $this->getData(self::userShow, $params);
 
         return $get ? $get->user : $get;
     }
